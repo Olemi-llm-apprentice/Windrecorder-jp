@@ -632,11 +632,15 @@ def submit_data_to_sqlite_db_process(saved_dir_filepath):
             if "deep_linking" in v.keys():
                 _deep_linking = v["deep_linking"]
 
+            # OCRテキストのエンコーディング処理を追加
+            if isinstance(v["ocr_text"], str):
+                v["ocr_text"] = v["ocr_text"].encode('utf-8').decode('utf-8')
+
             dataframe_all.loc[len(dataframe_all.index)] = [
                 v["vid_file_name"],
                 v["img_file_name"],
                 v["videofile_time"],
-                v["ocr_text"],
+                v["ocr_text"],  # エンコード済みのテキスト
                 True,
                 False,
                 v["thumbnail"],

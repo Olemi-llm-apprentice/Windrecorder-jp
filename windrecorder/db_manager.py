@@ -65,6 +65,7 @@ class _DBManager:
             self._db_filename_dict[db_filename] = utils.extract_date_from_db_filename(db_filename)
 
         conn = sqlite3.connect(db_filepath)
+        conn.execute('PRAGMA encoding = "UTF-8"')  # エンコーディングをUTF-8に設定
         c = conn.cursor()
         c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='video_text'")
 
@@ -98,6 +99,7 @@ class _DBManager:
     # 检查 column_name 列是否存在，若无则新增
     def db_ensure_row_exist(self, db_filepath, column_name, column_type, table_name="video_text"):
         conn = sqlite3.connect(db_filepath)
+        conn.execute('PRAGMA encoding = "UTF-8"')  # エンコーディングをUTF-8に設定
         cursor = conn.cursor()
 
         # 查询表信息
@@ -136,6 +138,7 @@ class _DBManager:
     def db_create_table(self, db_filepath):
         logger.info("Making table")
         conn = sqlite3.connect(db_filepath)
+        conn.execute('PRAGMA encoding = "UTF-8"')  # エンコーディングをUTF-8に設定
         conn.execute(
             """CREATE TABLE video_text
                    (videofile_name VARCHAR(100),
@@ -171,6 +174,7 @@ class _DBManager:
         db_filepath = file_utils.get_db_filepath_by_datetime(insert_db_datetime)  # 直接获取对应时间的数据库路径
 
         conn = sqlite3.connect(db_filepath)
+        conn.execute('PRAGMA encoding = "UTF-8"')  # エンコーディングをUTF-8に設定
         c = conn.cursor()
 
         c.execute(
@@ -220,6 +224,7 @@ class _DBManager:
     # 将df插入到数据库中
     def db_add_dataframe_to_db(self, database_path, dataframe):
         conn = sqlite3.connect(database_path)
+        conn.execute('PRAGMA encoding = "UTF-8"')  # エンコーディングをUTF-8に設定
 
         # 设置数据类型映射，确保列的数据类型在写入数据库时不会出错
         dtypes_dict = {

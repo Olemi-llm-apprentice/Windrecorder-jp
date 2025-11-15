@@ -529,23 +529,22 @@ def ocr_image_TesseractOCR(img_input, lang=config.third_party_engine_ocr_lang):
 def ocr_image_ms(img_input):
     logger.debug("OCR text by Windows.Media.Ocr.Cli")
     text = ""
-    # 调用Windows.Media.Ocr.Cli.exe,参数为图片路径
     command = ["ocr_lib\\Windows.Media.Ocr.Cli.exe", "-l", config.ocr_lang, img_input]
-
     proc = subprocess.run(command, capture_output=True)
-    encodings_try = ["gbk", "utf-8"]  # 强制兼容
+    
+    # エンコーディングの試行順序を変更
+    encodings_try = ["utf-8", "cp932", "shift-jis"]
+    
     for enc in encodings_try:
         try:
             text = proc.stdout.decode(enc)
-            if text is None or text == "":
-                pass
-            break
+            if text and text.strip():
+                break
         except UnicodeDecodeError:
-            pass
-
-    text = str(text.encode("utf-8").decode("utf-8"))
-
-    return text
+            continue
+    
+    # 明示的にUTF-8でエンコード
+    return text.encode('utf-8').decode('utf-8')
 
 
 # 测试所有可用的 OCR 方法
@@ -833,7 +832,7 @@ def ocr_core_logic(file_path, vid_file_name, iframe_path):
                 calc_to_sec_vidname = calc_to_sec_vidname.replace("-INDEX", "")
                 calc_to_sec_picname = round(
                     int(os.path.splitext(img_file_name.replace("_cropped", ""))[0]) / int(config.record_framerate)
-                )  # 用fps折算秒数
+                )
                 calc_to_sec_data = dtstr_to_seconds(calc_to_sec_vidname) + calc_to_sec_picname
                 win_title = record_wintitle.get_wintitle_or_deep_linking_by_timestamp(calc_to_sec_data)
                 win_title = record_wintitle.optimize_wintitle_name(win_title)
