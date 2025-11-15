@@ -28,14 +28,17 @@ goto start_install
 
 @REM -------------------------------------------------
 :uninstall_module
-poetry run pip uninstall rapidocr_onnxruntime
+cd ..
+cd ..
+uv pip uninstall rapidocr_onnxruntime
 goto :finish
 
 
 @REM -------------------------------------------------
 :finish
-for /F "tokens=* USEBACKQ" %%A in (`python -m poetry env info --path`) do call "%%A\Scripts\activate.bat"
-python _uninstall.py
+cd ..
+cd ..
+uv run python "extension\install_paddle_ocr\_uninstall.py"
 echo.
 echo   The uninstallation script has been completed. 已执行完卸载脚本。
 echo.

@@ -3,7 +3,6 @@ echo Loading extension, please stand by.
 echo.
 
 cd /d %~dp0
-for /F "tokens=* USEBACKQ" %%A in (`python -m poetry env info --path`) do call "%%A\Scripts\activate.bat"
 chcp 65001
 
 :start_install
@@ -35,7 +34,9 @@ goto start_install
 
 @REM -------------------------------------------------
 :install_module
-poetry run pip install -i https://pypi.tuna.tsinghua.edu.cn/simple uform
+cd ..
+cd ..
+uv pip install -i https://pypi.tuna.tsinghua.edu.cn/simple uform
 goto :finish
 
 
@@ -44,7 +45,9 @@ goto :finish
 echo.
 echo   checking the installation results... 检查安装结果……
 echo.
-python _test_install.py
+cd ..
+cd ..
+uv run python "extension\install_img_embedding_module\_test_install.py"
 echo.
 echo   The installation script has been completed. 已执行完安装脚本。
 echo.

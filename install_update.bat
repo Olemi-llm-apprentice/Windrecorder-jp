@@ -7,16 +7,25 @@ cd /d %~dp0
 echo -git: updating repository
 git pull
 
-echo -updating dependencies
-python -m pip install poetry
-python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple poetry
-python -m poetry config virtualenvs.in-project true
-python -m poetry install
+echo -updating dependencies with uv
+where uv >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Installing uv...
+    powershell -Command "irm https://astral.sh/uv/install.ps1 | iex"
+)
 
-for /F "usebackq tokens=*" %%A in (`python -m poetry env info --path`) do call "%%A\Scripts\activate.bat"
+if exist ".venv" (
+    echo Using existing virtual environment
+) else (
+    echo Creating virtual environment with uv...
+    uv venv
+)
+
+echo Installing dependencies...
+uv pip install -e .
 
 color 0e
 title Windrecorder - Quick Setup
-python "%~dp0\onboard_setting.py"
+uv run python "%~dp0\onboard_setting.py"
 
 pause
